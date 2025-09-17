@@ -65,7 +65,7 @@ class User(Base):
     role = relationship("Role", back_populates="users")
     profile = relationship("UserProfile", back_populates="user", uselist=False)
     bouncer_profile = relationship("BouncerProfile", back_populates="user", uselist=False)
-    bookings_as_user = relationship("Booking", foreign_keys="Booking.user_id", back_populates="user")
+    bookings = relationship("Booking", foreign_keys="Booking.user_id", back_populates="user")
     reviews_given = relationship("Review", foreign_keys="Review.reviewer_id", back_populates="reviewer")
     reviews_received = relationship("Review", foreign_keys="Review.reviewee_id", back_populates="reviewee")
     notifications = relationship("Notification", back_populates="user")

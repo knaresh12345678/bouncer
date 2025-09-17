@@ -72,8 +72,6 @@ const RoleBasedLogin: React.FC<RoleBasedLoginProps> = ({ userType, onBack, onLog
           subtitle: 'System Administration Portal',
           inputFocus: 'focus:ring-slate-500 focus:border-slate-500',
           linkColor: 'text-slate-600 hover:text-slate-500',
-          demoEmail: 'admin@secureguard.com',
-          demoPassword: 'admin123'
         };
       case 'user':
         return {
@@ -84,8 +82,6 @@ const RoleBasedLogin: React.FC<RoleBasedLoginProps> = ({ userType, onBack, onLog
           subtitle: 'Customer Portal',
           inputFocus: 'focus:ring-blue-500 focus:border-blue-500',
           linkColor: 'text-blue-600 hover:text-blue-500',
-          demoEmail: 'user@secureguard.com',
-          demoPassword: 'user123'
         };
       case 'bouncer':
         return {
@@ -96,8 +92,6 @@ const RoleBasedLogin: React.FC<RoleBasedLoginProps> = ({ userType, onBack, onLog
           subtitle: 'Security Professional Portal',
           inputFocus: 'focus:ring-emerald-500 focus:border-emerald-500',
           linkColor: 'text-emerald-600 hover:text-emerald-500',
-          demoEmail: 'bouncer@secureguard.com',
-          demoPassword: 'bouncer123'
         };
       default:
         return {
@@ -108,8 +102,6 @@ const RoleBasedLogin: React.FC<RoleBasedLoginProps> = ({ userType, onBack, onLog
           subtitle: 'Portal',
           inputFocus: 'focus:ring-blue-500 focus:border-blue-500',
           linkColor: 'text-blue-600 hover:text-blue-500',
-          demoEmail: 'user@secureguard.com',
-          demoPassword: 'user123'
         };
     }
   };
@@ -117,7 +109,9 @@ const RoleBasedLogin: React.FC<RoleBasedLoginProps> = ({ userType, onBack, onLog
   const theme = getThemeConfig();
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${theme.gradient} flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden`}>
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{
+      backgroundColor: '#450B36'
+    }}>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{
@@ -297,15 +291,6 @@ const RoleBasedLogin: React.FC<RoleBasedLoginProps> = ({ userType, onBack, onLog
                 <span className="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
                   Demo Credentials
                 </span>
-              </div>
-              <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
-                <div className="text-xs font-medium text-gray-700 mb-2">
-                  {userType.charAt(0).toUpperCase() + userType.slice(1)} Account
-                </div>
-                <div className="text-xs text-gray-600 space-y-1">
-                  <div>📧 {theme.demoEmail}</div>
-                  <div>🔑 {theme.demoPassword}</div>
-                </div>
               </div>
             </div>
 

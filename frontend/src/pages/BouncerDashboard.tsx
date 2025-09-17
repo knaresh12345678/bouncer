@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
+import { useBooking } from '../contexts/BookingContext';
 
 const BouncerDashboard: React.FC = () => {
   const [isAvailable, setIsAvailable] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const { bookingRequests } = useBooking();
+
+  // Get pending booking requests
+  const pendingRequests = bookingRequests.filter(request => request.status === 'pending');
 
   const upcomingBookings = [
     {
@@ -35,20 +40,20 @@ const BouncerDashboard: React.FC = () => {
   ];
 
   const Sidebar = () => (
-    <div className="bg-white w-64 min-h-screen shadow-lg border-r border-gray-200">
-      <div className="p-6 border-b border-gray-200">
+    <div className="w-64 min-h-screen shadow-lg" style={{backgroundColor: '#450B36'}}>
+      <div className="p-6 border-b border-purple-600">
         <div className="flex items-center space-x-3">
           <div className="bg-blue-700 p-2 rounded-xl">
             <span className="text-white font-bold text-xl">🛡️</span>
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">SecureGuard</h1>
-            <p className="text-sm text-gray-500">Bouncer Portal</p>
+            <h1 className="text-xl font-bold text-white">SecureGuard</h1>
+            <p className="text-sm text-purple-200">Bouncer Portal</p>
           </div>
         </div>
       </div>
 
-      <nav className="mt-6 px-4 space-y-2">
+      <nav className="mt-6 px-4 space-y-3">
         {[
           { id: 'dashboard', name: 'Dashboard', icon: '📊' },
           { id: 'bookings', name: 'My Bookings', icon: '📅' },
@@ -58,10 +63,10 @@ const BouncerDashboard: React.FC = () => {
           <button
             key={item.id}
             onClick={() => setActiveTab(item.id)}
-            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 ${
+            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 shadow-sm ${
               activeTab === item.id
-                ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                ? 'bg-white text-blue-700 border-2 border-blue-500 shadow-md transform scale-105'
+                : 'bg-white text-gray-700 hover:shadow-md hover:bg-blue-50 hover:text-gray-900'
             }`}
           >
             <span className="text-lg">{item.icon}</span>
@@ -71,7 +76,7 @@ const BouncerDashboard: React.FC = () => {
       </nav>
 
       <div className="absolute bottom-6 left-4 right-4">
-        <div className="bg-gray-50 p-4 rounded-xl">
+        <div className="bg-white p-4 rounded-xl shadow-sm">
           <div className="flex items-center space-x-3">
             <div className="bg-blue-700 p-2 rounded-full">
               <span className="text-white font-bold text-sm">JD</span>
@@ -97,11 +102,11 @@ const BouncerDashboard: React.FC = () => {
 
           {/* Stats Cards */}
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+            <div className="p-6 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow" style={{backgroundColor: '#A66B0F'}}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Active Bookings</p>
-                  <p className="text-3xl font-bold text-gray-900">3</p>
+                  <p className="text-sm font-medium text-orange-200">Active Bookings</p>
+                  <p className="text-3xl font-bold text-white">3</p>
                 </div>
                 <div className="bg-blue-100 p-3 rounded-xl">
                   <span className="text-blue-700 text-2xl">📅</span>
@@ -109,11 +114,11 @@ const BouncerDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+            <div className="p-6 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow" style={{backgroundColor: '#A66B0F'}}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">This Month</p>
-                  <p className="text-3xl font-bold text-gray-900">$2,450</p>
+                  <p className="text-sm font-medium text-orange-200">This Month</p>
+                  <p className="text-3xl font-bold text-white">$2,450</p>
                 </div>
                 <div className="bg-green-100 p-3 rounded-xl">
                   <span className="text-green-700 text-2xl">💰</span>
@@ -121,11 +126,11 @@ const BouncerDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+            <div className="p-6 rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow" style={{backgroundColor: '#A66B0F'}}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Rating</p>
-                  <p className="text-3xl font-bold text-gray-900">4.9</p>
+                  <p className="text-sm font-medium text-orange-200">Rating</p>
+                  <p className="text-3xl font-bold text-white">4.9</p>
                 </div>
                 <div className="bg-yellow-100 p-3 rounded-xl">
                   <span className="text-yellow-600 text-2xl">⭐</span>
@@ -135,16 +140,16 @@ const BouncerDashboard: React.FC = () => {
           </div>
 
           {/* Availability Card */}
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+          <div className="p-6 rounded-2xl shadow-sm border border-gray-200" style={{backgroundColor: '#A66B0F'}}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-gray-900">Availability Status</h3>
+              <h3 className="text-xl font-bold text-white">Availability Status</h3>
               <div className={`px-4 py-2 rounded-full text-sm font-medium ${
                 isAvailable ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
               }`}>
                 {isAvailable ? 'Available' : 'Unavailable'}
               </div>
             </div>
-            <p className="text-gray-600 mb-6">
+            <p className="text-orange-200 mb-6">
               Toggle your availability to receive new booking requests
             </p>
             <div className="flex items-center space-x-4">
@@ -160,15 +165,55 @@ const BouncerDashboard: React.FC = () => {
                   }`}
                 />
               </button>
-              <span className="text-gray-700 font-medium">
+              <span className="text-white font-medium">
                 {isAvailable ? 'You are available for bookings' : 'You are not available for bookings'}
               </span>
             </div>
           </div>
 
+          {/* New Booking Requests */}
+          <div className="p-6 rounded-2xl shadow-sm border border-gray-200" style={{backgroundColor: '#A66B0F'}}>
+            <h3 className="text-xl font-bold text-white mb-6">New Booking Requests</h3>
+            <div className="space-y-4">
+              {pendingRequests.length > 0 ? (
+                pendingRequests.map((request) => (
+                  <div key={request.id} className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <h4 className="font-bold text-gray-900">{request.eventName}</h4>
+                        <p className="text-gray-600">{request.date} • {request.time}</p>
+                        <p className="text-gray-500 text-sm">📍 {request.location}</p>
+                        {request.description && (
+                          <p className="text-gray-500 text-sm mt-1">{request.description}</p>
+                        )}
+                      </div>
+                      <div className="text-right space-y-2">
+                        <p className="font-bold text-gray-900">${request.price}</p>
+                        <div className="flex space-x-2">
+                          <button className="px-3 py-1 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors">
+                            Accept
+                          </button>
+                          <button className="px-3 py-1 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 transition-colors">
+                            Decline
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <span className="text-4xl mb-2 block">📝</span>
+                  <p className="font-medium">No new requests</p>
+                  <p className="text-sm">New booking requests will appear here</p>
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* Upcoming Bookings */}
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-            <h3 className="text-xl font-bold text-gray-900 mb-6">Upcoming Bookings</h3>
+          <div className="p-6 rounded-2xl shadow-sm border border-gray-200" style={{backgroundColor: '#A66B0F'}}>
+            <h3 className="text-xl font-bold text-white mb-6">Upcoming Bookings</h3>
             <div className="space-y-4">
               {upcomingBookings.map((booking) => (
                 <div key={booking.id} className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
@@ -202,15 +247,17 @@ const BouncerDashboard: React.FC = () => {
         <h2 className="text-3xl font-bold text-gray-900 mb-4">
           {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
         </h2>
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
-          <p className="text-gray-600">This section is under development.</p>
+        <div className="p-8 rounded-2xl shadow-sm border border-gray-200" style={{backgroundColor: '#A66B0F'}}>
+          <p className="text-orange-200">This section is under development.</p>
         </div>
       </div>
     );
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen flex" style={{
+      backgroundColor: '#450B36'
+    }}>
       <Sidebar />
       <div className="flex-1">
         <MainContent />

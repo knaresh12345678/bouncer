@@ -39,7 +39,7 @@ export const useAuth = () => {
   return context;
 };
 
-// Simple password hashing function (for demo purposes only)
+// Simple password hashing function
 const hashPassword = (password: string): string => {
   // In a real application, use a proper hashing library like bcrypt
   return btoa(password + 'secureguard_salt');
@@ -53,36 +53,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [registeredUsers, setRegisteredUsers] = useState<RegisteredUser[]>([]);
 
-  // Demo credentials for testing
-  const demoCredentials = [
-    {
-      id: 'demo-admin',
-      firstName: 'Admin',
-      lastName: 'User',
-      email: 'admin@secureguard.com',
-      password: hashPassword('admin123'),
-      userType: 'admin' as UserType,
-      registeredAt: new Date().toISOString()
-    },
-    {
-      id: 'demo-user',
-      firstName: 'Demo',
-      lastName: 'User',
-      email: 'user@secureguard.com',
-      password: hashPassword('user123'),
-      userType: 'user' as UserType,
-      registeredAt: new Date().toISOString()
-    },
-    {
-      id: 'demo-bouncer',
-      firstName: 'Demo',
-      lastName: 'Bouncer',
-      email: 'bouncer@secureguard.com',
-      password: hashPassword('bouncer123'),
-      userType: 'bouncer' as UserType,
-      registeredAt: new Date().toISOString()
-    }
-  ];
 
   // Load stored users and current user from localStorage on app start
   useEffect(() => {
@@ -92,13 +62,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (storedUsers) {
       try {
         const parsedUsers = JSON.parse(storedUsers);
-        setRegisteredUsers([...demoCredentials, ...parsedUsers]);
+        setRegisteredUsers(parsedUsers);
       } catch (error) {
         console.error('Error loading stored users:', error);
-        setRegisteredUsers(demoCredentials);
+        setRegisteredUsers([]);
       }
     } else {
-      setRegisteredUsers(demoCredentials);
+      setRegisteredUsers([]);
     }
 
     if (storedCurrentUser) {
@@ -112,7 +82,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const saveUsersToStorage = (users: RegisteredUser[]) => {
-    const customUsers = users.filter(user => !user.id.startsWith('demo-'));
+    const customUsers = users;
     localStorage.setItem('bouncer_registered_users', JSON.stringify(customUsers));
   };
 

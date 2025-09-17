@@ -152,7 +152,9 @@ const RegistrationPage: React.FC<RegistrationPageProps> = ({ onBack, onRegistrat
   const theme = getThemeForUserType(formData.userType);
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${theme.gradient} flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden`}>
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{
+      backgroundColor: '#450B36'
+    }}>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{

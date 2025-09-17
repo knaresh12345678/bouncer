@@ -9,6 +9,7 @@ import BouncerDashboard from './pages/BouncerDashboard'
 import AdminDashboard from './pages/AdminDashboard'
 import UserDashboard from './pages/UserDashboard'
 import { AuthProvider } from './contexts/AuthContext'
+import { BookingProvider } from './contexts/BookingContext'
 
 type UserType = 'admin' | 'user' | 'bouncer';
 
@@ -84,7 +85,7 @@ function App() {
     }
   }
 
-  // Compact navigation overlay (for demo purposes)
+  // Compact navigation overlay
   const NavigationOverlay = () => (
     <div className="fixed top-2 right-2 z-50">
       <div className="bg-white/90 backdrop-blur-sm rounded-lg shadow-md border border-gray-200 p-2">
@@ -171,10 +172,12 @@ function App() {
 
   return (
     <AuthProvider>
-      <div className="relative">
-        {renderPage()}
-        <NavigationOverlay />
-      </div>
+      <BookingProvider>
+        <div className="relative">
+          {renderPage()}
+          <NavigationOverlay />
+        </div>
+      </BookingProvider>
     </AuthProvider>
   )
 }

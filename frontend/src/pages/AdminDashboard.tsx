@@ -29,40 +29,6 @@ const AdminDashboard: React.FC = () => {
   const [bouncers, setBouncers] = useState<any[]>([]);
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
 
-  // Function to load demo data (can be called when needed)
-  const loadDemoData = () => {
-    setDashboardStats({
-      totalUsers: 1234,
-      totalBouncers: 89,
-      activeBookings: 156,
-      successRate: 99.2,
-      userGrowth: 12,
-      bouncerGrowth: 5,
-      bookingGrowth: 8,
-      rateGrowth: 0.5
-    });
-
-    setUsers([
-      { id: 1, name: 'John Smith', email: 'john@example.com', role: 'User', status: 'Active', joined: '2024-01-15' },
-      { id: 2, name: 'Sarah Wilson', email: 'sarah@example.com', role: 'Bouncer', status: 'Active', joined: '2024-02-20' },
-      { id: 3, name: 'Mike Johnson', email: 'mike@example.com', role: 'User', status: 'Inactive', joined: '2024-03-10' },
-      { id: 4, name: 'Lisa Brown', email: 'lisa@example.com', role: 'Bouncer', status: 'Active', joined: '2024-04-05' }
-    ]);
-
-    setBouncers([
-      { id: 1, name: 'Sarah Wilson', rating: 4.9, completedJobs: 45, status: 'Verified', availability: 'Available' },
-      { id: 2, name: 'Lisa Brown', rating: 4.7, completedJobs: 32, status: 'Verified', availability: 'Busy' },
-      { id: 3, name: 'Tom Davis', rating: 4.8, completedJobs: 28, status: 'Pending', availability: 'Available' },
-      { id: 4, name: 'Mark Taylor', rating: 4.6, completedJobs: 51, status: 'Verified', availability: 'Available' }
-    ]);
-
-    setRecentActivity([
-      { action: 'New user registered', user: 'John Smith', time: '2 minutes ago', type: 'user' },
-      { action: 'Booking completed', user: 'Sarah Wilson', time: '15 minutes ago', type: 'booking' },
-      { action: 'Bouncer verified', user: 'Mike Johnson', time: '1 hour ago', type: 'bouncer' },
-      { action: 'Payment processed', user: 'Lisa Brown', time: '2 hours ago', type: 'payment' }
-    ]);
-  };
 
   // Simulate data fetching
   useEffect(() => {
@@ -74,7 +40,6 @@ const AdminDashboard: React.FC = () => {
 
         // In a real app, you would fetch data from your API here
         // For now, we start with empty data (zero values)
-        // Call loadDemoData() if you want to populate with demo data
 
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
@@ -87,20 +52,20 @@ const AdminDashboard: React.FC = () => {
   }, []);
 
   const Sidebar = () => (
-    <div className="bg-white w-64 min-h-screen shadow-lg border-r border-gray-200">
-      <div className="p-6 border-b border-gray-200">
+    <div className="w-64 min-h-screen shadow-lg" style={{backgroundColor: '#450B36'}}>
+      <div className="p-6">
         <div className="flex items-center space-x-3">
           <div className="bg-blue-700 p-2 rounded-xl">
             <span className="text-white font-bold text-xl">🛡️</span>
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">SecureGuard</h1>
-            <p className="text-sm text-gray-500">Admin Panel</p>
+            <h1 className="text-xl font-bold text-white">SecureGuard</h1>
+            <p className="text-sm text-purple-200">Admin Panel</p>
           </div>
         </div>
       </div>
 
-      <nav className="mt-6 px-4 space-y-2">
+      <nav className="mt-6 px-4 space-y-3">
         {[
           { id: 'dashboard', name: 'Dashboard', icon: '📊' },
           { id: 'users', name: 'Users', icon: '👥' },
@@ -112,10 +77,10 @@ const AdminDashboard: React.FC = () => {
           <button
             key={item.id}
             onClick={() => setActiveTab(item.id)}
-            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 ${
+            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 shadow-sm ${
               activeTab === item.id
-                ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                ? 'bg-white text-blue-700 border-2 border-blue-500 shadow-md transform scale-105'
+                : 'bg-white text-gray-700 hover:shadow-md hover:bg-blue-50 hover:text-gray-900'
             }`}
           >
             <span className="text-lg">{item.icon}</span>
@@ -125,7 +90,7 @@ const AdminDashboard: React.FC = () => {
       </nav>
 
       <div className="absolute bottom-6 left-4 right-4">
-        <div className="bg-gray-50 p-4 rounded-xl">
+        <div className="bg-white p-4 rounded-xl shadow-sm">
           <div className="flex items-center space-x-3">
             <div className="bg-blue-700 p-2 rounded-full">
               <span className="text-white font-bold text-sm">AD</span>
@@ -157,15 +122,6 @@ const AdminDashboard: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center space-x-4">
-          {/* Demo Data Button */}
-          {activeTab === 'dashboard' && (
-            <button
-              onClick={loadDemoData}
-              className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black font-medium rounded-lg transition-colors text-sm"
-            >
-              Load Demo Data
-            </button>
-          )}
           <button className="relative p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
             <span className="text-xl">🔔</span>
             <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
@@ -610,7 +566,9 @@ const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen flex" style={{
+      backgroundColor: '#450B36'
+    }}>
       <Sidebar />
       <div className="flex-1">
         <TopBar />

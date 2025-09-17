@@ -2,7 +2,9 @@ import React from 'react';
 
 const SimpleLanding: React.FC = () => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{
+      backgroundColor: '#450B36'
+    }}>
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
