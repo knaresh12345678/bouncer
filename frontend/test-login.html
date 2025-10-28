@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direct Login Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .credentials {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Direct Backend Login Test</h1>
+        <p>This page tests the backend API directly, bypassing React/Router issues.</p>
+
+        <div class="credentials">
+            <h3>📋 Available Credentials:</h3>
+            <ul>
+                <li><strong>Admin:</strong> admin@glufer.com / admin123</li>
+                <li><strong>Bouncer:</strong> bouncer@glufer.com / bouncer123</li>
+                <li><strong>User:</strong> user@glufer.com / user123</li>
+                <li><strong>Test:</strong> test5@example.com / test12345</li>
+            </ul>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required placeholder="Enter your email">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required placeholder="Enter your password">
+            </div>
+
+            <button type="submit">🚀 Test Login</button>
+            <button type="button" onclick="testAllCredentials()">🧪 Test All Credentials</button>
+        </form>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function testLogin(email, password) {
+            const resultDiv = document.getElementById('result');
+
+            try {
+                // Create FormData exactly like the React app does
+                const formData = new FormData();
+                formData.append('username', email);
+                formData.append('password', password);
+
+                resultDiv.innerHTML = `🔄 Testing login for ${email}...`;
+                resultDiv.className = 'result';
+
+                const response = await fetch('http://localhost:8000/api/auth/login', {
+                    method: 'POST',
+                    body: formData,
+                    // Don't set Content-Type header for FormData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `✅ LOGIN SUCCESSFUL!
+
+📝 User Information:
+   Name: ${data.user.first_name} ${data.user.last_name}
+   Email: ${data.user.email}
+   Role: ${data.user.role}
+   ID: ${data.user.id}
+   Active: ${data.user.is_active}
+   Verified: ${data.user.is_verified}
+
+🎫 Token Information:
+   Access Token: ${data.access_token.substring(0, 50)}...
+   Token Type: ${data.token_type}
+   Expires In: ${data.expires_in} seconds
+
+🌐 Backend Connection: ✅ Working
+🔐 Authentication: ✅ Working
+🎯 Role Detection: ✅ Working`;
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.innerHTML = `❌ LOGIN FAILED
+
+Status: ${response.status} ${response.statusText}
+Error: ${data.detail || 'Unknown error'}
+
+🔍 Troubleshooting:
+   • Check email and password
+   • Verify backend is running on http://localhost:8000
+   • Check CORS settings`;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `❌ NETWORK ERROR
+
+Error: ${error.message}
+
+🔍 Troubleshooting:
+   • Backend server might not be running
+   • Check if http://localhost:8000 is accessible
+   • Verify no CORS issues
+   • Check browser console for more details`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testAllCredentials() {
+            const resultDiv = document.getElementById('result');
+            const credentials = [
+                { email: 'admin@glufer.com', password: 'admin123', name: 'Admin' },
+                { email: 'bouncer@glufer.com', password: 'bouncer123', name: 'Bouncer' },
+                { email: 'user@glufer.com', password: 'user123', name: 'User' },
+                { email: 'test5@example.com', password: 'test12345', name: 'Test User' }
+            ];
+
+            resultDiv.innerHTML = '🧪 Testing all credentials...';
+            resultDiv.className = 'result';
+
+            let results = '';
+            let successCount = 0;
+
+            for (const cred of credentials) {
+                try {
+                    const formData = new FormData();
+                    formData.append('username', cred.email);
+                    formData.append('password', cred.password);
+
+                    const response = await fetch('http://localhost:8000/api/auth/login', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        results += `✅ ${cred.name}: SUCCESS (${data.user.role})\n`;
+                        successCount++;
+                    } else {
+                        results += `❌ ${cred.name}: FAILED (${response.status})\n`;
+                    }
+                } catch (error) {
+                    results += `❌ ${cred.name}: NETWORK ERROR\n`;
+                }
+            }
+
+            results += `\n📊 Results: ${successCount}/${credentials.length} credentials working`;
+
+            if (successCount === credentials.length) {
+                results += '\n\n🎉 ALL CREDENTIALS WORKING!';
+                resultDiv.className = 'result success';
+            } else {
+                results += '\n\n⚠️ Some credentials failed';
+                resultDiv.className = 'result error';
+            }
+
+            resultDiv.innerHTML = results;
+        }
+
+        // Handle form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            testLogin(email, password);
+        });
+
+        // Auto-fill with admin credentials for quick testing
+        window.addEventListener('load', function() {
+            document.getElementById('email').value = 'admin@glufer.com';
+            document.getElementById('password').value = 'admin123';
+        });
+    </script>
+</body>
+</html>
