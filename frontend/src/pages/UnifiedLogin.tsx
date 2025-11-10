@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import toast, { Toaster } from 'react-hot-toast'
 import { Eye, EyeOff, Mail, Lock, Shield, Cpu, Zap } from 'lucide-react'
-import FuturisticBackground from '../components/FuturisticBackground'
+// Background is now set via backgroundImage style
 import ForgotPasswordModal from '../components/ForgotPasswordModal'
 
 interface FormData {
@@ -22,16 +22,41 @@ const UnifiedLogin: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [showForgotPassword, setShowForgotPassword] = useState(false)
 
-  // Redirect if already authenticated (but not during initial loading)
+  // Redirect if already authenticated on component mount
   React.useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard');
+      // Get user role and redirect to appropriate dashboard
+      const userRole = localStorage.getItem('bouncer_user_role') || 'user';
+      redirectToDashboard(userRole);
     }
-  }, [isAuthenticated, navigate])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount, not on isAuthenticated changes
 
   const redirectToDashboard = (role: string) => {
-    // Navigate to the dashboard route - ProtectedRoute will handle role-based redirection
-    navigate('/dashboard');
+    console.log('[FRONTEND] Redirecting user to dashboard based on role:', role);
+
+    // Normalize role to lowercase to handle case variations
+    const normalizedRole = role.toLowerCase().trim();
+    console.log('[FRONTEND] Normalized role:', normalizedRole);
+
+    // Navigate to the specific dashboard based on role
+    const roleRoutes = {
+      admin: '/admin',
+      bouncer: '/bouncer',
+      user: '/user'
+    };
+
+    const targetRoute = roleRoutes[normalizedRole as keyof typeof roleRoutes];
+
+    if (!targetRoute) {
+      console.error('[FRONTEND] Invalid account type found:', normalizedRole);
+      console.error('[FRONTEND] Available roles:', Object.keys(roleRoutes));
+      toast.error('Invalid account type. Please contact support.');
+      return;
+    }
+
+    console.log(`[FRONTEND] Navigating ${normalizedRole} user to: ${targetRoute}`);
+    navigate(targetRoute, { replace: true });
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,6 +86,8 @@ const UnifiedLogin: React.FC = () => {
         // Get user role from response or storage
         const userRole = localStorage.getItem('bouncer_user_role') || 'user'
 
+        console.log('[FRONTEND] Login successful. User role:', userRole);
+
         // Show success message with role
         const roleMessages = {
           admin: '👑 Welcome back, Admin!',
@@ -68,12 +95,14 @@ const UnifiedLogin: React.FC = () => {
           user: '👤 Welcome back, User!'
         }
 
-        toast.success(roleMessages[userRole as keyof typeof roleMessages] || '✅ Login successful!')
+        toast.success(roleMessages[userRole as keyof typeof roleMessages] || '✅ Login successful!', {
+          duration: 2000
+        })
 
-        // Store role in localStorage for redirection
+        // Redirect immediately to the role-specific dashboard
         setTimeout(() => {
           redirectToDashboard(userRole)
-        }, 1500)
+        }, 500) // Reduced timeout for faster redirect
       } else {
         toast.error('❌ Invalid email or password')
       }
@@ -101,7 +130,14 @@ const UnifiedLogin: React.FC = () => {
   }
 
   return (
-    <FuturisticBackground>
+    <div
+      className="min-h-screen bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: 'url(/login-background.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}
+    >
       <Toaster
         position="top-right"
         toastOptions={{
@@ -130,7 +166,7 @@ const UnifiedLogin: React.FC = () => {
         }}
       />
 
-      <div className="flex items-center justify-center min-h-screen p-4">
+      <div className="flex items-center justify-end min-h-screen p-4 pr-8 md:pr-16 lg:pr-24">
         <div className="w-full max-w-md">
           {/* Futuristic login card */}
           <div className="glass-card p-8 electric-glow">
@@ -300,7 +336,7 @@ const UnifiedLogin: React.FC = () => {
         onClose={() => setShowForgotPassword(false)}
         onSuccess={handleForgotPasswordSuccess}
       />
-    </FuturisticBackground>
+    </div>
   )
 }
 

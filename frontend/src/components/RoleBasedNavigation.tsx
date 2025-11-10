@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import {
   Home,
   Calendar,
@@ -94,16 +94,33 @@ const Navigation: React.FC = () => {
           href: '/user/book',
           icon: Shield,
           roles: ['user']
+        },
+        {
+          name: 'Profile',
+          href: '/user/profile',
+          icon: Settings,
+          roles: ['user']
         }
       );
     }
 
-    items.push({
-      name: 'Profile',
-      href: '/profile',
-      icon: Settings,
-      roles: ['admin', 'bouncer', 'user']
-    });
+    if (hasRole('bouncer')) {
+      items.push({
+        name: 'Profile',
+        href: '/bouncer/profile',
+        icon: Settings,
+        roles: ['bouncer']
+      });
+    }
+
+    if (hasRole('admin')) {
+      items.push({
+        name: 'Settings',
+        href: '/admin/settings',
+        icon: Settings,
+        roles: ['admin']
+      });
+    }
 
     return items;
   }, [hasRole]);

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import toast, { Toaster } from 'react-hot-toast'
 import { Eye, EyeOff, Mail, Lock, User, Shield, Zap, UserPlus, Phone } from 'lucide-react'
-import FuturisticBackground from '../components/FuturisticBackground'
+// Background is now set via backgroundImage style
 
 interface FormData {
   fullName: string
@@ -586,7 +586,14 @@ const RegistrationPage: React.FC = () => {
   }
 
   return (
-    <FuturisticBackground>
+    <div
+      className="min-h-screen bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: 'url(/login-background.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}
+    >
       <Toaster
         position="top-right"
         toastOptions={{
@@ -615,7 +622,7 @@ const RegistrationPage: React.FC = () => {
         }}
       />
 
-      <div className="flex items-center justify-center min-h-screen p-4">
+      <div className="flex items-center justify-end min-h-screen p-4 pr-8 md:pr-12 lg:pr-16">
         <div className="w-full max-w-3xl">
           {/* Futuristic registration card with fade-in animation - wider rectangular layout */}
           <div className="glass-card p-10 electric-glow animate-fade-in">
@@ -1021,7 +1028,7 @@ const RegistrationPage: React.FC = () => {
           </div>
         </div>
       </div>
-    </FuturisticBackground>
+    </div>
   )
 }
 

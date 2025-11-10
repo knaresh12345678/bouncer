@@ -6,6 +6,10 @@ import ResetPasswordPage from './pages/ResetPasswordPage'
 import BouncerDashboard from './pages/BouncerDashboard'
 import AdminDashboard from './pages/AdminDashboard'
 import UserDashboard from './pages/UserDashboard'
+import UserProfile from './pages/UserProfile'
+import PostRequestPage from './pages/PostRequestPage'
+import IndividualBookingPage from './pages/IndividualBookingPage'
+import GroupBookingPage from './pages/GroupBookingPage'
 import LoadingSpinner from './components/LoadingSpinner'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { BookingProvider } from './contexts/BookingContext'
@@ -26,21 +30,42 @@ const ProtectedRoute: React.FC<{
     return <LoadingSpinner />;
   }
 
-  if (!isAuthenticated || !currentUser) {
+  // Check authentication from both state AND localStorage
+  // This prevents race conditions where state hasn't updated yet after login
+  const hasToken = localStorage.getItem('bouncer_access_token');
+  const storedUserData = localStorage.getItem('bouncer_current_user');
+
+  let effectiveUser = currentUser;
+
+  // If state hasn't updated yet but we have data in localStorage, use that
+  if (!currentUser && storedUserData && hasToken) {
+    try {
+      effectiveUser = JSON.parse(storedUserData);
+      console.log('[ProtectedRoute] Using localStorage user data (state not ready yet):', effectiveUser);
+    } catch (e) {
+      console.error('[ProtectedRoute] Failed to parse stored user data:', e);
+    }
+  }
+
+  // Check if user is authenticated (either from state or localStorage)
+  if ((!isAuthenticated && !hasToken) || !effectiveUser) {
+    console.log('[ProtectedRoute] Not authenticated, redirecting to:', redirectTo);
     return <Navigate to={redirectTo} replace />;
   }
 
   // If a specific role is required, check it
-  if (allowedRole && currentUser.userType !== allowedRole) {
+  if (allowedRole && effectiveUser.userType !== allowedRole) {
+    console.log('[ProtectedRoute] Role mismatch. Required:', allowedRole, 'Actual:', effectiveUser.userType);
     // Redirect to appropriate dashboard based on user role
     const roleRedirects = {
       admin: '/admin',
       bouncer: '/bouncer',
       user: '/user'
     };
-    return <Navigate to={roleRedirects[currentUser.userType] || '/login'} replace />;
+    return <Navigate to={roleRedirects[effectiveUser.userType] || '/login'} replace />;
   }
 
+  console.log('[ProtectedRoute] Access granted for role:', effectiveUser.userType);
   return <>{children}</>;
 };
 
@@ -113,6 +138,34 @@ const AppContent: React.FC = () => {
           <Route path="/user" element={
             <ProtectedRoute allowedRole="user">
               <UserDashboard />
+            </ProtectedRoute>
+          } />
+
+          {/* User Profile Page - Protected */}
+          <Route path="/user/profile" element={
+            <ProtectedRoute allowedRole="user">
+              <UserProfile />
+            </ProtectedRoute>
+          } />
+
+          {/* Post Request Page - Protected */}
+          <Route path="/user/post-request" element={
+            <ProtectedRoute allowedRole="user">
+              <PostRequestPage />
+            </ProtectedRoute>
+          } />
+
+          {/* Individual Booking Page - Protected */}
+          <Route path="/user/browse/bouncers/individual-booking" element={
+            <ProtectedRoute allowedRole="user">
+              <IndividualBookingPage />
+            </ProtectedRoute>
+          } />
+
+          {/* Group Booking Page - Protected */}
+          <Route path="/user/browse/bouncers/group-booking" element={
+            <ProtectedRoute allowedRole="user">
+              <GroupBookingPage />
             </ProtectedRoute>
           } />
 

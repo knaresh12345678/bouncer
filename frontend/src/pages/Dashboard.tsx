@@ -74,7 +74,7 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Monthly Revenue</p>
-              <p className="text-2xl font-bold text-gray-900">$24,500</p>
+              <p className="text-2xl font-bold text-gray-900">₹24,500</p>
             </div>
           </div>
         </div>
@@ -150,7 +150,7 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">This Month</p>
-              <p className="text-2xl font-bold text-gray-900">$2,450</p>
+              <p className="text-2xl font-bold text-gray-900">₹2,450</p>
             </div>
           </div>
         </div>
@@ -181,7 +181,7 @@ const Dashboard: React.FC = () => {
                   <p className="text-sm text-gray-600">123 Main St, Downtown</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium text-gray-900">$300</p>
+                  <p className="font-medium text-gray-900">₹300</p>
                   <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
                     Confirmed
                   </span>
@@ -249,7 +249,7 @@ const Dashboard: React.FC = () => {
                   <p className="text-sm text-gray-600">Grand Hotel Ballroom</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium text-gray-900">$450</p>
+                  <p className="font-medium text-gray-900">₹450</p>
                   <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
                     Completed
                   </span>

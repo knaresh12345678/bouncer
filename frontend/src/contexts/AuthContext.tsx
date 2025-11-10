@@ -56,6 +56,45 @@ interface AuthContextType {
 const API_BASE_URL = 'http://localhost:8000/api';
 axios.defaults.baseURL = API_BASE_URL;
 
+// Add axios request interceptor to include auth token in all requests
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('bouncer_access_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+      // Debug logging for development
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[AXIOS] Request to ${config.url} with token: ${token.substring(0, 20)}...`);
+      }
+    } else {
+      console.warn('[AXIOS] No token found in localStorage for request to:', config.url);
+    }
+    return config;
+  },
+  (error) => {
+    console.error('[AXIOS] Request interceptor error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add axios response interceptor to handle 401 errors globally
+// Note: We don't auto-redirect on 401 to avoid race conditions during login
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      console.warn('[AUTH] 401 Unauthorized error detected:', error.config?.url);
+
+      // Don't auto-clear auth data or redirect - let ProtectedRoute handle it
+      // This prevents race conditions where dashboard loads before token is ready
+
+      // Only clear and redirect if we're certain the session is invalid
+      // (e.g., after multiple failed attempts or explicit logout)
+    }
+    return Promise.reject(error);
+  }
+);
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = (): AuthContextType => {
@@ -112,6 +151,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
   const register = async (userData: Omit<RegisteredUser, 'id' | 'registeredAt'>): Promise<boolean> => {
     try {
+      console.log('[FRONTEND] Registering user with account type:', userData.userType);
+
       // Create form data for the backend
       const formData = new FormData();
       formData.append('email', userData.email);
@@ -119,6 +160,15 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
       formData.append('first_name', userData.firstName);
       formData.append('last_name', userData.lastName);
       formData.append('phone', userData.phone || '');
+      formData.append('user_type', userData.userType);
+
+      console.log('[FRONTEND] Sending registration data:', {
+        email: userData.email,
+        first_name: userData.firstName,
+        last_name: userData.lastName,
+        phone: userData.phone || '',
+        user_type: userData.userType
+      });
 
       const response = await axios.post('/auth/register', formData, {
         headers: {
@@ -205,17 +255,24 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
         console.log('Created auth user:', authUser);
 
-        // Store tokens and user data
-        setToken(tokenData.access_token);
-        setCurrentUser(authUser);
-
+        // CRITICAL: Store to localStorage FIRST before updating state
+        // This ensures the token is available immediately for axios interceptors
         localStorage.setItem('bouncer_access_token', tokenData.access_token);
         localStorage.setItem('bouncer_refresh_token', tokenData.refresh_token);
         localStorage.setItem('bouncer_current_user', JSON.stringify(authUser));
-        localStorage.setItem('bouncer_user_role', userRole); // Store role for redirection
+        localStorage.setItem('bouncer_user_role', userRole);
 
-        // Set axios default authorization header
+        // Set axios default authorization header for immediate use
         axios.defaults.headers.common['Authorization'] = `Bearer ${tokenData.access_token}`;
+
+        // Log token storage for debugging
+        console.log('[AUTH] Token stored in localStorage and axios defaults');
+        console.log('[AUTH] Token length:', tokenData.access_token.length);
+        console.log('[AUTH] Token starts with:', tokenData.access_token.substring(0, 20) + '...');
+
+        // Update React state AFTER storage (state updates are async)
+        setToken(tokenData.access_token);
+        setCurrentUser(authUser);
 
         return true;
       }
